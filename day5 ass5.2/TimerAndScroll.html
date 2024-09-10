@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/babel">
+    // 1. Subscribing to a Timer
+    const Timer = () => {
+      const [second, setSecond] = React.useState(0)
+      const [isRunning, setIsrunning] = React.useState(false)
+
+      React.useEffect(() => {
+        let interval;
+        if (isRunning) {
+
+
+          interval = setInterval(() => {
+            setSecond(prevSecond => prevSecond + 1)
+          }, 1000)
+        }
+        return () => {
+          clearInterval(interval)
+        }
+      }, [isRunning])
+
+
+      return (
+        <div>
+          Second: {second}
+          <button onClick={() => setIsrunning(true)}>start</button>
+          <button onClick={() => setIsrunning(false)}>stop</button>
+          <button onClick={() => { setSecond(0); setIsrunning(false) }}>reset</button>
+        </div>
+      )
+
+    }
+
+
+    // 2. Subscribing to a Document Event(Scroll Event)
+
+
+
+    const Scroll = () => {
+      const [scrollPosition, setScrollPosition] = React.useState(0)
+
+      React.useEffect(() => {
+        const handleScroll = () => {
+          setScrollPosition(window.scrollY)
+        }
+        window.addEventListener("scroll", handleScroll)
+
+        return () => {
+          window.removeEventListener("scroll", handleScroll)
+        }
+
+      }, [])
+
+      return (
+        <>
+          <div><h1>{scrollPosition}</h1></div>
+          <div style={{ height: "1500px", backgroundColor: "black", color: "white" }}>Scroll down to see the effect!</div>
+        </>
+      )
+    }
+    const App = () => {
+      return (
+        <>
+          <Timer />
+          <Scroll />
+        </>
+      )
+    }
+
+    const container = ReactDOM.createRoot(document.getElementById("root"));
+    container.render(<App />);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Weather App</title>
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- React and Babel Scripts -->
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script type="text/babel">
+
+    // 1. Fetching Data from an API using 
+    const FetchingData = () => {
+      const [data, setData] = React.useState([])
+      const [loading, setLoading] = React.useState(true)
+      const FetchData = async () => {
+        try {
+          let response = await axios.get("https://jsonplaceholder.typicode.com/posts")
+          const result = await response.data;
+          setData(result)
+          setLoading(false)
+
+        } catch (error) {
+          console.log("this the server error: " + error.message)
+          setLoading(false)
+        }
+      }
+      React.useEffect(() => {
+        FetchData()
+      }, [])
+      if (loading) return <p>Loading...</p>
+      return (
+        <>
+          <div>
+            <h1>Fetched Data:</h1>
+            <ul>
+              {data.slice(0, 5).map((item) => (
+                <li key={item.id}>{item.title}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )
+
+    }
+    // 2.Events(Mouse Movement) using useEffect
+
+    const MouseMovement = () => {
+      const [position, setPosition] = React.useState({ x: 0, y: 0 });
+      const handleMouseMove = (e) => {
+        setPosition({ x: e.clientX, y: e.clientY });
+        console.log(`mouse moved to x;${e.clientX} and  y:${e.clientY}`);
+      }
+      React.useEffect(() => {
+        window.addEventListener("mousemove", handleMouseMove)
+        // return () => {
+        //   window.removeEventListener("mousemove", handleMouseMove)
+        // }
+      }, [])
+      return (
+        <>
+          <div>
+            <h2>Mouse Position</h2>
+            <p>X: {position.x}, Y: {position.y}</p>
+          </div>
+        </>
+      )
+    }
+
+
+    // 3. Updating the Document Title using useEffect
+    const Updating = () => {
+      const [count, setCount] = React.useState(0)
+      React.useEffect(() => {
+        // console.log(document.title = `Count: ${count}`);
+        return () => {
+          document.title = "React App";
+        };
+      }, [])
+
+      return (
+        <>
+          <div>
+            <h1>Document Title Updater</h1>
+            <p>Current Count: {count}</p>
+            <button onClick={() => setCount(count + 1)}>Increment Count</button>
+          </div>
+        </>
+      )
+    }
+    const App = () => {
+      return (
+        <>
+          <FetchingData />
+
+          <Updating />
+
+        </>
+      )
+    }
+    const container = ReactDOM.createRoot(document.getElementById("root"));
+    container.render(<App />);
+  </script>
+</body>
+
+</html>
